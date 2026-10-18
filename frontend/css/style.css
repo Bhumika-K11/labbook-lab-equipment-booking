@@ -1,0 +1,9 @@
+/* Our own small styles (Bootstrap does most of the work) */
+body {
+    background-color: #f4f7f6;
+}
+
+.login-page .card {
+    border: none;
+    border-radius: 12px;
+}
