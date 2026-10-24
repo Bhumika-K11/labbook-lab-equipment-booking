@@ -1,8 +1,9 @@
 import os
 from flask import Flask, jsonify, send_from_directory
 
-import db                                   # our database helper file (db.py)
-from routes.auth_api import auth_bp         # the login APIs (routes/auth_api.py)
+import db                                        # our database helper file (db.py)
+from routes.auth_api import auth_bp              # the login APIs (routes/auth_api.py)
+from routes.equipment_api import equipment_bp    # the equipment APIs (routes/equipment_api.py)
 
 # Find the frontend folder (it is next to the backend folder)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +27,7 @@ def create_app(test_config=None):
 
     # Register the API groups
     app.register_blueprint(auth_bp)          # /api/login, /api/logout, /api/me
+    app.register_blueprint(equipment_bp)     # /api/equipment
 
     # ---------- API ----------
     @app.get("/api/health")
