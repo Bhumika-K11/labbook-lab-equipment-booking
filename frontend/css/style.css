@@ -7,3 +7,12 @@ body {
     border: none;
     border-radius: 12px;
 }
+/* Dashboard cards lift slightly when you hover over them */
+.dash-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.15s ease;
+}
+.dash-card:hover {
+    transform: translateY(-3px);
+}
