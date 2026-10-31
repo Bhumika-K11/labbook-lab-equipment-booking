@@ -88,7 +88,9 @@ def create_booking():
     day = parse_date(data.get("date"))
 
     # Check every field before touching the database
-    if not isinstance(equipment_id, int) or not isinstance(slot, int):
+    # bool is a kind of int in Python (True == 1), so reject it on purpose (Issue #1)
+    if not isinstance(equipment_id, int) or isinstance(equipment_id, bool) \
+            or not isinstance(slot, int) or isinstance(slot, bool):
         return jsonify({"error": "Please choose equipment and a time slot"}), 400
     error = check_date(day)
     if error:
@@ -99,6 +101,8 @@ def create_booking():
         return jsonify({"error": "This time slot has already started"}), 400
     if len(purpose) < 5:
         return jsonify({"error": "Please write the purpose (at least 5 characters)"}), 400
+    if len(purpose) > 200:                           # Issue #2
+        return jsonify({"error": "Purpose is too long (maximum 200 characters)"}), 400
 
     db = get_db()
     item = db.execute("SELECT * FROM equipment WHERE id = ?", (equipment_id,)).fetchone()
@@ -129,7 +133,7 @@ def create_booking():
         "message": f"Booked {item['name']} on {day.isoformat()}, {slot_label(slot)}",
         "booking_id": cur.lastrowid,
     }), 201
-    
+
 
 # ---------- 3. See my own bookings (students) ----------
 @bookings_bp.get("/api/bookings/mine")

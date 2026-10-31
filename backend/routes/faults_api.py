@@ -18,12 +18,14 @@ def report_fault():
     description = (data.get("description") or "").strip()
 
     # Check every field first
-    if not isinstance(equipment_id, int):
+    if not isinstance(equipment_id, int) or isinstance(equipment_id, bool):   # Issue #1
         return jsonify({"error": "Please choose the equipment"}), 400
     if severity not in SEVERITIES:
         return jsonify({"error": "Please choose a severity (Low, Medium or High)"}), 400
     if len(description) < 10:
         return jsonify({"error": "Please describe the problem (at least 10 characters)"}), 400
+    if len(description) > 500:                       # Issue #2
+        return jsonify({"error": "Description is too long (maximum 500 characters)"}), 400
 
     db = get_db()
     item = db.execute("SELECT * FROM equipment WHERE id = ?", (equipment_id,)).fetchone()
