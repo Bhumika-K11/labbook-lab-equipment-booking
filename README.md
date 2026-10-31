@@ -51,3 +51,33 @@ python -m pytest -v
 - Fix applied → Test cycle 2: 25 passed (Issues #1 and #2 closed)
 
 ## Architecture overview
+```
+Browser (HTML + JS pages in /frontend)
+      │  fetch() calls, JSON
+      ▼
+Flask app (backend/app.py)
+      ├── routes/auth_api.py       /api/login, /api/logout, /api/me
+      ├── routes/equipment_api.py  /api/equipment
+      ├── routes/bookings_api.py   /api/equipment/<id>/slots, /api/bookings, cancel
+      └── routes/faults_api.py     /api/faults, /api/faults/mine
+      │
+      ▼
+SQLite database (schema.sql): users, equipment, bookings, fault_reports
+```
+- Login uses a signed session cookie; passwords are stored only as hashes.
+- A unique index in the database prevents two active bookings for the same item, date and slot.
+- All SQL uses `?` parameters (protects against SQL injection).
+
+## Known limitations
+- No lab-assistant page yet to resolve fault reports, so a reported item stays *Faulty* (Issue #3, planned for the next increment).
+- The lab assistant cannot yet add or edit equipment from the website (done through `seed.py`).
+- `SECRET_KEY` is a fixed development value in `app.py`; it must be changed before real deployment.
+- Runs on Flask's development server only; not set up for production hosting.
+
+## Version control and issue tracking
+- Development history: see the commit list on GitHub.
+- Bug/issue log: see the **Issues** tab (including closed issues).
+
+## Declaration
+Third-party libraries used: Flask, Werkzeug, Bootstrap 5, pytest.
+AI assistance: an AI assistant (Claude) was used for step-by-step guidance and code suggestions during development and testing. All code was run, tested and checked by me, and I can explain how it works.
